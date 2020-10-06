@@ -4,4 +4,5 @@
   "contains_py_api": false,
   "py_api_xml_name": "",
   "exclude": ["**/*.Data.DB.csproj", "**/*.Service.csproj", "**/*.Test.csproj", "**/Test/"]
+  
 }
