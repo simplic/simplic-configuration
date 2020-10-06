@@ -1,2 +1,5 @@
 <ReleaseNotes>
+  <ChangeSet>
+    <Change type="enhancement">Add an api to load, save and delete connection configurations</Change>
+  </ChangeSet>
 </ReleaseNotes>
