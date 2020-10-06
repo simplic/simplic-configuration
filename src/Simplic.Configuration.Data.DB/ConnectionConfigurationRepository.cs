@@ -92,7 +92,7 @@ namespace Simplic.Configuration.Data.DB
                 if (obj.Id == 0)
                     obj.Id = sqlService.OpenConnection((connection) =>
                     {
-                        return connection.Query($"Select GetIdentity('{TableName}')").FirstOrDefault();
+                        return connection.Query($"Select Get_Identity('{TableName}')").FirstOrDefault();
                     });
 
                 var diffColumns = new Dictionary<string, string>()
