@@ -137,7 +137,7 @@ namespace Simplic.Configuration.Data.DB
         /// </summary>
         public string TableName
         {
-            get => "ESS_DC_BASE_DB_Connection";
+            get => "ESS_DC_BASE_DBConnection";
         }
     }
 }
