@@ -119,6 +119,22 @@ namespace Simplic.Configuration.Data.DB
             return true;
         }
 
+        /// <summary>
+        /// Gets a conncetion configuration by the given tenant name
+        /// </summary>
+        /// <param name="name">The tenant name of the connection configuration</param>
+        /// <returns>A connection configuration object</returns>
+        public ConnectionConfiguration GetByName(string name)
+        {
+            return sqlService.OpenConnection((connection) =>
+            {
+                return connection.Query<ConnectionConfiguration>($"Select *, ID as Id, mnd_name as TenantName, mnd_nummer as TenantNumber, dbtype as ConnectionType from {TableName} where mnd_name = :name", new { name }).FirstOrDefault();
+            });
+        }
+
+        /// <summary>
+        /// Gest the table name
+        /// </summary>
         public string TableName
         {
             get => "ESS_DC_BASE_DB_Connection";

@@ -8,5 +8,11 @@ namespace Simplic.Configuration
     public interface IConnectionConfigurationRepository : IRepositoryBase<int, ConnectionConfiguration>
     {
 
+        /// <summary>
+        /// Gets a conncetion configuration by the given tenant name
+        /// </summary>
+        /// <param name="name">The tenant name of the connection configuration</param>
+        /// <returns>A connection configuration object</returns>
+        ConnectionConfiguration GetByName(string name);
     }
 }

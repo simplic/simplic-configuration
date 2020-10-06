@@ -42,6 +42,13 @@ namespace Simplic.Configuration.Service
         public IEnumerable<ConnectionConfiguration> GetAll() => connectionConfigurationRepository.GetAll();
 
         /// <summary>
+        /// Gets a conncetion configuration by the given tenant name
+        /// </summary>
+        /// <param name="name">The tenant name of the connection configuration</param>
+        /// <returns>A connection configuration object</returns>
+        public ConnectionConfiguration GetByName(string name) => connectionConfigurationRepository.GetByName(name);
+
+        /// <summary>
         /// Saves a connection configuration
         /// </summary>
         /// <param name="obj">The object to save</param>
