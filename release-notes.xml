@@ -1,5 +1,8 @@
 <ReleaseNotes>
-  <ChangeSet>
-    <Change type="enhancement">Add an api to load, save and delete connection configurations</Change>
-  </ChangeSet>
+	<ChangeSet>
+		<Change type="enhancement">Add an api to load, save and delete connection configurations</Change>
+	</ChangeSet>
+	<ChangeSet>
+		<Change type="bug">Specified datatype in ConnectionConfigurationRepository so exception will not be thrown.</Change>
+	</ChangeSet>
 </ReleaseNotes>
