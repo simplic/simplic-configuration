@@ -1,8 +1,8 @@
 <ReleaseNotes>
-	<ChangeSet>
+	<ChangeSet guid="7e1ea2e6-6661-4959-b18f-38f41a36220e">
 		<Change type="enhancement">Add an api to load, save and delete connection configurations</Change>
 	</ChangeSet>
-	<ChangeSet>
+	<ChangeSet guid="07e8b2cc-53d4-4fcd-8266-c9eae83e7d44">
 		<Change type="bug">Specified datatype in ConnectionConfigurationRepository so exception will not be thrown.</Change>
 	</ChangeSet>
 </ReleaseNotes>
