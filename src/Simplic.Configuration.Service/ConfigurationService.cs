@@ -126,5 +126,18 @@ namespace Simplic.Configuration.Service
             else
                 cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, value));                            
         }
+
+        /// <summary>
+        /// Create a new configuration entry
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
+        /// <param name="editable">Determines whether the configuration is editable</param>
+        /// <param name="configurationValue">Configuration value</param>
+        public void Create(string pluginName, string configurationName, int type, bool editable, string configurationValue)
+        {
+            configurationRepository.Create(pluginName, configurationName, type, editable, configurationValue);
+        }
     }
 }
