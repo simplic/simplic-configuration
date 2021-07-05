@@ -138,7 +138,14 @@ namespace Simplic.Configuration.Service
         public void Create<T>(string pluginName, string configurationName, int type, bool editable, T configurationValue)
         {
             configurationRepository.Create(pluginName, configurationName, type, editable, "");
-            SetValue<T>(pluginName, configurationName, null, configurationValue);
+            SetValue<T>(pluginName, configurationName, "", configurationValue);
         }
+
+        /// <summary>
+        /// Checks whether a configuration exists
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        public bool Exists(string pluginName, string configurationName) => configurationRepository.Exists(pluginName, configurationName);
     }
 }

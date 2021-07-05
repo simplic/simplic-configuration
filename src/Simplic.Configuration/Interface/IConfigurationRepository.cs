@@ -33,6 +33,13 @@ namespace Simplic.Configuration
         void Create(string pluginName, string configurationName, int type, bool editable, string configurationValue);
 
         /// <summary>
+        /// Checks whether a configuration exists
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        bool Exists(string pluginName, string configurationName);
+
+        /// <summary>
         /// Gets a list configuration values
         /// </summary>
         /// <typeparam name="T">Expected type</typeparam>

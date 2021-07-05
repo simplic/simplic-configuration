@@ -175,5 +175,20 @@ namespace Simplic.Configuration.Data
                     CastConfigurationValue<T>(rawValue.ConfigValue));
             }
         }
+
+        /// <summary>
+        /// Checks whether a configuration exists
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        public bool Exists(string pluginName, string configurationName)
+        {
+            var sql = $"SELECT COUNT(*) FROM {TableName} WHERE PlugInName LIKE :pluginName AND ConfigName LIKE :configurationName ";
+
+            return sqlService.OpenConnection((connection) =>
+            {
+                return connection.Query<int>(sql, new { pluginName, configurationName }).FirstOrDefault() > 0;
+            });
+        }
     }
 }
