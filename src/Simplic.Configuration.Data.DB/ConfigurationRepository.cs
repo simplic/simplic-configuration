@@ -61,7 +61,8 @@ namespace Simplic.Configuration.Data
             var sql = $"SELECT ConfigValue FROM {TableName} WHERE " +
                 $" PlugInName LIKE :pluginName and UserName LIKE :username and ConfigName LIKE :configurationName ";
 
-            return sqlService.OpenConnection((connection) => {
+            return sqlService.OpenConnection((connection) =>
+            {
                 return connection.Query<string>(sql, new { pluginName, userName, configurationName })
                     .FirstOrDefault();
             });
@@ -87,19 +88,21 @@ namespace Simplic.Configuration.Data
                         $" UserCanOverwrite FROM {TableName} WHERE PlugInName = :pluginName AND " +
                         $" ConfigName = :configurationName AND UserName = '')";
 
-                    sqlService.OpenConnection((connection) => {
+                    sqlService.OpenConnection((connection) =>
+                    {
 
-                        var affectedRows = connection.Execute(sql, 
+                        var affectedRows = connection.Execute(sql,
                             new { pluginName, userName, configurationName, configurationValue });
 
                         return affectedRows > 0;
                     });
-                }                               
+                }
             }
 
             if (GetValue(pluginName, userName, configurationName) == null)
             {
-                sqlService.OpenConnection((connection) => {
+                sqlService.OpenConnection((connection) =>
+                {
                     var sql = $"INSERT INTO {TableName}(PlugInName, UserName, ConfigName, ConfigValue) " +
                         $" values(:pluginName, :userName, :configurationName, :configurationValue)";
 
@@ -111,7 +114,8 @@ namespace Simplic.Configuration.Data
             }
             else
             {
-                sqlService.OpenConnection((connection) => {
+                sqlService.OpenConnection((connection) =>
+                {
                     var sql = $"UPDATE {TableName} SET ConfigValue = :configurationValue WHERE PlugInName = :pluginName " +
                             $" AND UserName = :userName AND ConfigName = :configurationName";
 
@@ -124,6 +128,32 @@ namespace Simplic.Configuration.Data
         }
 
         /// <summary>
+        /// Create a new configuration entry
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
+        /// <param name="editable">Determines whether the configuration is editable</param>
+        /// <param name="configurationValue">Configuration value</param>
+        public void Create(string pluginName, string configurationName, int type, bool editable, string configurationValue)
+        {
+            sqlService.OpenConnection((connection) =>
+            {
+                var sql = $"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue, IsEditable, ContentType) " +
+                    $" values(:pluginName, null, :configurationName, :configurationValue, :isEditable, :contentType)";
+
+                connection.Execute(sql, new 
+                {
+                    pluginName,
+                    configurationName, 
+                    configurationValue,
+                    isEditable = editable,
+                    contentType = type
+                });
+            });
+        }
+
+        /// <summary>
         /// Gets a list configuration values
         /// </summary>
         /// <typeparam name="T">Expected type</typeparam>
@@ -132,7 +162,8 @@ namespace Simplic.Configuration.Data
         /// <returns>A list configuration values</returns>
         public IEnumerable<ConfigurationValue> GetValues<T>(string plugInName, string userName)
         {
-            var rawValues = sqlService.OpenConnection((connection) => {
+            var rawValues = sqlService.OpenConnection((connection) =>
+            {
 
                 return connection.Query($"SELECT ConfigValue, ConfigName FROM {TableName} " +
                      $" WHERE PlugInName = :plugInName AND UserName = :userName", new { plugInName, userName });
