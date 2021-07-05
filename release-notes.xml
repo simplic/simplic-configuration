@@ -5,7 +5,7 @@
 	<ChangeSet guid="07e8b2cc-53d4-4fcd-8266-c9eae83e7d44">
 		<Change type="bug">Specified datatype in ConnectionConfigurationRepository so exception will not be thrown.</Change>
 	</ChangeSet>
-  <ChangeSet>
+  <ChangeSet guid="ebef91c0-8208-4d4e-8e38-2880654099d0">
     <Change type="featre">Adds a method for creating new configuration-entries.</Change>
   </ChangeSet>
 </ReleaseNotes>
