@@ -130,12 +130,12 @@ namespace Simplic.Configuration.Data
         /// <summary>
         /// Create a new configuration entry
         /// </summary>
-        /// <param name="pluginName">Plugin name</param>
         /// <param name="configurationName">Configuration name</param>
+        /// <param name="pluginName">Plugin name</param>
         /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
         /// <param name="editable">Determines whether the configuration is editable</param>
         /// <param name="configurationValue">Configuration value</param>
-        public void Create(string pluginName, string configurationName, int type, bool editable, string configurationValue)
+        public void Create(string configurationName, string pluginName, int type, bool editable, string configurationValue)
         {
             sqlService.OpenConnection((connection) =>
             {
@@ -179,9 +179,9 @@ namespace Simplic.Configuration.Data
         /// <summary>
         /// Checks whether a configuration exists
         /// </summary>
-        /// <param name="pluginName">Plugin name</param>
         /// <param name="configurationName">Configuration name</param>
-        public bool Exists(string pluginName, string configurationName)
+        /// <param name="pluginName">Plugin name</param>
+        public bool Exists(string configurationName, string pluginName)
         {
             var sql = $"SELECT COUNT(*) FROM {TableName} WHERE PlugInName LIKE :pluginName AND ConfigName LIKE :configurationName ";
 

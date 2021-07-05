@@ -25,19 +25,19 @@ namespace Simplic.Configuration
         /// <summary>
         /// Create a new configuration entry
         /// </summary>
-        /// <param name="pluginName">Plugin name</param>
         /// <param name="configurationName">Configuration name</param>
+        /// <param name="pluginName">Plugin name</param>
         /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
         /// <param name="editable">Determines whether the configuration is editable</param>
         /// <param name="configurationValue">Configuration value</param>
-        void Create(string pluginName, string configurationName, int type, bool editable, string configurationValue);
+        void Create(string configurationName, string pluginName, int type, bool editable, string configurationValue);
 
         /// <summary>
         /// Checks whether a configuration exists
         /// </summary>
-        /// <param name="pluginName">Plugin name</param>
         /// <param name="configurationName">Configuration name</param>
-        bool Exists(string pluginName, string configurationName);
+        /// <param name="pluginName">Plugin name</param>
+        bool Exists(string configurationName, string pluginName);
 
         /// <summary>
         /// Gets a list configuration values
