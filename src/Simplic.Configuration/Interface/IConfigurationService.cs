@@ -34,5 +34,15 @@ namespace Simplic.Configuration
         /// <param name="UserName">Benutzername</param>
         /// <param name="Value">Wert</param>
         void SetValue<T>(string configurationName, string pluginName, string userName, T value);
+
+        /// <summary>
+        /// Create a new configuration entry
+        /// </summary>
+        /// <param name="pluginName">Plugin name</param>
+        /// <param name="configurationName">Configuration name</param>
+        /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
+        /// <param name="editable">Determines whether the configuration is editable</param>
+        /// <param name="configurationValue">Configuration value</param>
+        void Create<T>(string pluginName, string configurationName, int type, bool editable, T configurationValue);
     }
 }
