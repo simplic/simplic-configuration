@@ -140,7 +140,7 @@ namespace Simplic.Configuration.Data
             sqlService.OpenConnection((connection) =>
             {
                 var sql = $"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue, IsEditable, ContentType) " +
-                    $" values(:pluginName, null, :configurationName, :configurationValue, :isEditable, :contentType)";
+                    $" values(:pluginName, '', :configurationName, :configurationValue, :isEditable, :contentType)";
 
                 connection.Execute(sql, new 
                 {
