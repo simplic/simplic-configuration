@@ -76,7 +76,7 @@ namespace Simplic.Configuration.Service
                 returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
                 returnValue.Value = CastConfigurationValue<T>(value);
 
-                if (noCaching == false)
+                if (!noCaching)
                     cacheService.Set(returnValue);
             }
 
