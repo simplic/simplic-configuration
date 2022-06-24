@@ -29,13 +29,11 @@ namespace Simplic.Configuration.Service
         private T CastConfigurationValue<T>(object value)
         {
             if (value is T t)
-            {
                 return t;
-            }
+
             if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
-            {
                 value = Convert.ToInt32(value?.ToString());
-            }
+
             try
             {
                 return (T)((value == null) ? null : Convert.ChangeType(value, typeof(T)));
