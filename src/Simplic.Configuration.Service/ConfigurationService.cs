@@ -63,20 +63,17 @@ namespace Simplic.Configuration.Service
             if (!noCaching && returnValue != null)
                 return CastConfigurationValue<T>(returnValue.Value);
 
-            if (returnValue == null || noCaching)
-            {
-                var value = configurationRepository.GetValue(pluginName, userName, configurationName);
+            var value = configurationRepository.GetValue(pluginName, userName, configurationName);
 
-                // If no configuration value exists, try to load a user independent setting
-                if (string.IsNullOrWhiteSpace(value))
-                    value = configurationRepository.GetValue(pluginName, "", configurationName);
+            // If no configuration value exists, try to load a user independent setting
+            if (string.IsNullOrWhiteSpace(value))
+                value = configurationRepository.GetValue(pluginName, "", configurationName);
 
-                returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
-                returnValue.Value = CastConfigurationValue<T>(value);
+            returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
+            returnValue.Value = CastConfigurationValue<T>(value);
 
-                if (!noCaching)
-                    cacheService.Set(returnValue);
-            }
+            if (!noCaching)
+                cacheService.Set(returnValue);
 
             return (T)returnValue.Value;
         }
