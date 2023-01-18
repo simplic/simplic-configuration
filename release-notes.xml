@@ -9,6 +9,6 @@
     <Change type="feature">Adds a method for creating new configuration-entries.</Change>
   </ChangeSet>
   <ChangeSet>
-    <Change type="bug">Fixes conversion errors.</Change>
+    <Change type="bug">Fixes conversion errors when Editing a boolean value.</Change>
   </ChangeSet>
 </ReleaseNotes>
