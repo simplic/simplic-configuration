@@ -28,17 +28,11 @@ namespace Simplic.Configuration.Service
         /// <returns>Casted value</returns>
         private T CastConfigurationValue<T>(object value)
         {
-            if (typeof(T) == typeof(bool) || typeof(T) == typeof(Boolean))
-            {
-                value = Convert.ToInt32(value == null ? "0" : value.ToString());
-            }
-            if (typeof(T) == typeof(bool?) || typeof(T) == typeof(Boolean?))
-            {
-                if (value != null)
-                {
-                    value = Convert.ToInt32(value.ToString() == "0");
-                }
-            }
+            if (value is T t)
+                return t;
+
+            if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
+                value = Convert.ToInt32(value?.ToString());
 
             try
             {
@@ -46,7 +40,7 @@ namespace Simplic.Configuration.Service
             }
             catch
             {
-                return default(T);
+                return default;
             }
         }
         #endregion
@@ -66,20 +60,20 @@ namespace Simplic.Configuration.Service
             var returnValue = cacheService.Get<ConfigurationValue>(
                 ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
 
-            if (returnValue == null || noCaching == true)
-            {
-                var value = configurationRepository.GetValue(pluginName, userName, configurationName);
+            if (!noCaching && returnValue != null)
+                return CastConfigurationValue<T>(returnValue.Value);
 
-                // If no configuration value exists, try to load a user independent setting
-                if (string.IsNullOrWhiteSpace(value))
-                    value = configurationRepository.GetValue(pluginName, "", configurationName);                
+            var value = configurationRepository.GetValue(pluginName, userName, configurationName);
 
-                returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
-                returnValue.Value = CastConfigurationValue<T>(value);
+            // If no configuration value exists, try to load a user independent setting
+            if (string.IsNullOrWhiteSpace(value))
+                value = configurationRepository.GetValue(pluginName, "", configurationName);
 
-                if (noCaching == false)                
-                    cacheService.Set(returnValue);                                    
-            }
+            returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
+            returnValue.Value = CastConfigurationValue<T>(value);
+
+            if (!noCaching)
+                cacheService.Set(returnValue);
 
             return (T)returnValue.Value;
         }
@@ -116,7 +110,7 @@ namespace Simplic.Configuration.Service
             }
 
             configurationRepository.SetValue(pluginName, userName, configurationName,
-                _value == null ? null : _value.ToString());            
+                _value == null ? null : _value.ToString());
 
             var configValue = cacheService.Get<ConfigurationValue>(
                 ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
@@ -124,21 +118,28 @@ namespace Simplic.Configuration.Service
             if (configValue != null)
                 configValue.Value = value;
             else
-                cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, value));                            
+                cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, value));
         }
 
         /// <summary>
         /// Create a new configuration entry
         /// </summary>
-        /// <param name="pluginName">Plugin name</param>
         /// <param name="configurationName">Configuration name</param>
+        /// <param name="pluginName">Plugin name</param>
         /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
         /// <param name="editable">Determines whether the configuration is editable</param>
         /// <param name="configurationValue">Configuration value</param>
-        public void Create<T>(string pluginName, string configurationName, int type, bool editable, T configurationValue)
+        public void Create<T>(string configurationName, string pluginName, int type, bool editable, T configurationValue)
         {
-            configurationRepository.Create(pluginName, configurationName, type, editable, "");
-            SetValue<T>(pluginName, configurationName, null, configurationValue);
+            configurationRepository.Create(configurationName, pluginName, type, editable, "");
+            SetValue<T>(configurationName, pluginName, "", configurationValue);
         }
+
+        /// <summary>
+        /// Checks whether a configuration exists
+        /// </summary>
+        /// <param name="configurationName">Configuration name</param>
+        /// <param name="pluginName">Plugin name</param>
+        public bool Exists(string configurationName, string pluginName) => configurationRepository.Exists(configurationName, pluginName);
     }
 }
