@@ -31,12 +31,14 @@ namespace Simplic.Configuration.Service
             if (value is T t)
                 return t;
 
-            if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
+            if (typeof(T) == typeof(bool))
                 value = Convert.ToInt32(value?.ToString());
+            if (typeof(T) == typeof(bool?))
+                value = value == null ? (int?)null : Convert.ToInt32(value.ToString());
 
             try
             {
-                return (T)((value == null) ? null : Convert.ChangeType(value, typeof(T)));
+                return (T)Convert.ChangeType(value, typeof(T));
             }
             catch
             {
@@ -57,11 +59,14 @@ namespace Simplic.Configuration.Service
         /// <returns>Wert</returns>
         public T GetValue<T>(string configurationName, string pluginName, string userName, bool noCaching = false)
         {
-            var returnValue = cacheService.Get<ConfigurationValue>(
-                ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
+            if (!noCaching)
+            {
+                var returnValue = cacheService.Get<ConfigurationValue>(
+                    ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
 
-            if (!noCaching && returnValue != null)
-                return CastConfigurationValue<T>(returnValue.Value);
+                if (returnValue == null)
+                    return CastConfigurationValue<T>(returnValue.Value);
+            }
 
             var value = configurationRepository.GetValue(pluginName, userName, configurationName);
 
@@ -69,13 +74,12 @@ namespace Simplic.Configuration.Service
             if (string.IsNullOrWhiteSpace(value))
                 value = configurationRepository.GetValue(pluginName, "", configurationName);
 
-            returnValue = new ConfigurationValue(configurationName, pluginName, userName, value);
-            returnValue.Value = CastConfigurationValue<T>(value);
+            var configValue = new ConfigurationValue(configurationName, pluginName, userName, value);
 
             if (!noCaching)
-                cacheService.Set(returnValue);
+                cacheService.Set(configValue);
 
-            return (T)returnValue.Value;
+            return CastConfigurationValue<T>(value);
         }
 
         /// <summary>
@@ -87,7 +91,11 @@ namespace Simplic.Configuration.Service
         /// <returns>Enumerable of values</returns>
         public IEnumerable<ConfigurationValue> GetValues<T>(string pluginName, string userName)
         {
-            return configurationRepository.GetValues<T>(pluginName, userName);
+            foreach(var config in configurationRepository.GetValues(pluginName, userName))
+            {
+                config.Value = CastConfigurationValue<T>(config.Value);
+                yield return config;
+            }
         }
 
         /// <summary>
@@ -99,26 +107,26 @@ namespace Simplic.Configuration.Service
         /// <param name="value">Wert</param>
         public void SetValue<T>(string configurationName, string pluginName, string userName, T value)
         {
-            object _value = value;
+            string str = null;
 
-            if (_value != null)
+            if (value is bool)
             {
-                if (value is bool || value is Boolean)
-                {
-                    _value = Convert.ToInt32(value).ToString();
-                }
+                str = Convert.ToInt32(value).ToString();
+            }
+            else if (value is bool? && value != null)
+            {
+                str = Convert.ToInt32(value).ToString();
             }
 
-            configurationRepository.SetValue(pluginName, userName, configurationName,
-                _value == null ? null : _value.ToString());
+            configurationRepository.SetValue(pluginName, userName, configurationName, str);
 
             var configValue = cacheService.Get<ConfigurationValue>(
                 ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
 
             if (configValue != null)
-                configValue.Value = value;
+                configValue.Value = str;
             else
-                cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, value));
+                cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, str));
         }
 
         /// <summary>

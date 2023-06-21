@@ -46,6 +46,6 @@ namespace Simplic.Configuration
         /// <param name="plugInName">Plugin name</param>
         /// <param name="userName">User name</param>
         /// <returns>A list configuration values</returns>
-        IEnumerable<ConfigurationValue> GetValues<T>(string plugInName, string userName);
+        IEnumerable<ConfigurationValue> GetValues(string plugInName, string userName);
     }
 }

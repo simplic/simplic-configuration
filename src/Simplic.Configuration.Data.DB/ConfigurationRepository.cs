@@ -16,39 +16,6 @@ namespace Simplic.Configuration.Data
             this.sqlService = sqlService;
         }
 
-        #region Private Methods
-        /// <summary>
-        /// Casts a configuration value to a specific type
-        /// </summary>
-        /// <typeparam name="T">Target type</typeparam>
-        /// <param name="value">Value to cast</param>
-        /// <returns>Casted value</returns>
-        private T CastConfigurationValue<T>(object value)
-        {
-            if (typeof(T) == typeof(bool) || typeof(T) == typeof(Boolean))
-            {
-                value = Convert.ToInt32(value == null ? "0" : value.ToString());
-            }
-            if (typeof(T) == typeof(bool?) || typeof(T) == typeof(Boolean?))
-            {
-                if (value != null)
-                {
-                    value = Convert.ToInt32(value.ToString() == "0");
-                }
-            }
-
-            try
-            {
-                return (T)((value == null) ? null : Convert.ChangeType(value, typeof(T)));
-            }
-            catch
-            {
-                return default(T);
-            }
-        }
-
-        #endregion
-
         /// <summary>
         /// Gets a configuration value
         /// </summary>
@@ -142,10 +109,10 @@ namespace Simplic.Configuration.Data
                 var sql = $"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue, IsEditable, ContentType) " +
                     $" values(:pluginName, '', :configurationName, :configurationValue, :isEditable, :contentType)";
 
-                connection.Execute(sql, new 
+                connection.Execute(sql, new
                 {
                     pluginName,
-                    configurationName, 
+                    configurationName,
                     configurationValue,
                     isEditable = editable,
                     contentType = type
@@ -160,19 +127,17 @@ namespace Simplic.Configuration.Data
         /// <param name="plugInName">Plugin name</param>
         /// <param name="userName">User name</param>
         /// <returns>A list configuration values</returns>
-        public IEnumerable<ConfigurationValue> GetValues<T>(string plugInName, string userName)
+        public IEnumerable<ConfigurationValue> GetValues(string plugInName, string userName)
         {
             var rawValues = sqlService.OpenConnection((connection) =>
             {
-
                 return connection.Query($"SELECT ConfigValue, ConfigName FROM {TableName} " +
                      $" WHERE PlugInName = :plugInName AND UserName = :userName", new { plugInName, userName });
             });
 
             foreach (var rawValue in rawValues)
             {
-                yield return new ConfigurationValue(rawValue.ConfigName, plugInName, userName,
-                    CastConfigurationValue<T>(rawValue.ConfigValue));
+                yield return new ConfigurationValue(rawValue.ConfigName, plugInName, userName, rawValue.ConfigValue);
             }
         }
 
