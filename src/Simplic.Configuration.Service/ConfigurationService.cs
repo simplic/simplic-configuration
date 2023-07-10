@@ -64,7 +64,7 @@ namespace Simplic.Configuration.Service
                 var returnValue = cacheService.Get<ConfigurationValue>(
                     ConfigurationValue.GetKeyName(configurationName, pluginName, userName));
 
-                if (returnValue == null)
+                if (returnValue != null)
                     return CastConfigurationValue<T>(returnValue.Value);
             }
 
