@@ -40,83 +40,64 @@ namespace Simplic.Configuration.Data
         /// </summary>
         /// <param name="pluginName">Plugin name</param>
         /// <param name="userName">User name</param>
-        /// <param name="configurationName">Configuration name</param>
-        /// <param name="configurationValue">Configuration value</param>
-        public void SetValue(string pluginName, string userName, string configurationName, string configurationValue)
+        /// <param name="configName">Configuration name</param>
+        /// <param name="configValue">Configuration value</param>
+        public void SetValue(string pluginName, string userName, string configName, string configValue)
         {
+            string sql;
+
             // Wenn es eine Benutzerabhängige Konfiguration ist und noch kein Wert existiert, dann versuchen wir den datensatz zu kopieren.
-            if (string.IsNullOrWhiteSpace(userName) == false)
+            if (!string.IsNullOrWhiteSpace(userName) && GetValue(pluginName, userName, configName) == null)
             {
-                if (GetValue(pluginName, userName, configurationName) == null)
-                {
-                    var sql = $"INSERT INTO {TableName}(PlugInName, UserName, ConfigName, ConfigValue, ContentType, " +
-                        $" IsEditable, UserCanOverwrite) " +
-                        $" (SELECT PlugInName, :userName, ConfigName, :configurationValue, ContentType, IsEditable, " +
-                        $" UserCanOverwrite FROM {TableName} WHERE PlugInName = :pluginName AND " +
-                        $" ConfigName = :configurationName AND UserName = '')";
 
-                    sqlService.OpenConnection((connection) =>
-                    {
-
-                        var affectedRows = connection.Execute(sql,
-                            new { pluginName, userName, configurationName, configurationValue });
-
-                        return affectedRows > 0;
-                    });
-                }
-            }
-
-            if (GetValue(pluginName, userName, configurationName) == null)
-            {
-                sqlService.OpenConnection((connection) =>
-                {
-                    var sql = $"INSERT INTO {TableName}(PlugInName, UserName, ConfigName, ConfigValue) " +
-                        $" values(:pluginName, :userName, :configurationName, :configurationValue)";
-
-                    var affectedRows = connection.Execute(sql,
-                           new { pluginName, userName, configurationName, configurationValue });
-
-                    return affectedRows > 0;
-                });
+                sql = $"INSERT INTO {TableName}(PlugInName, UserName, ConfigName, ConfigValue, ContentType, " +
+                    $" IsEditable, UserCanOverwrite) " +
+                    $" (SELECT PlugInName, :userName, ConfigName, :configValue, ContentType, IsEditable, " +
+                    $" UserCanOverwrite FROM {TableName} WHERE PlugInName = :pluginName AND " +
+                    $" ConfigName = :configName AND UserName = '')";
             }
             else
             {
-                sqlService.OpenConnection((connection) =>
+                if (GetValue(pluginName, userName, configName) == null)
                 {
-                    var sql = $"UPDATE {TableName} SET ConfigValue = :configurationValue WHERE PlugInName = :pluginName " +
-                            $" AND UserName = :userName AND ConfigName = :configurationName";
-
-                    var affectedRows = connection.Execute(sql,
-                           new { pluginName, userName, configurationName, configurationValue });
-
-                    return affectedRows > 0;
-                });
+                    sql = $"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue) " +
+                        $" values(:pluginName, :userName, :configName, :configValue)";
+                }
+                else
+                {
+                    sql = $"UPDATE {TableName} SET ConfigValue = :configValue WHERE PlugInName = :pluginName " +
+                            $" AND UserName = :userName AND ConfigName = :configName";
+                }
             }
+
+            sqlService.OpenConnection((connection) =>
+            {
+                return connection.Execute(sql, new { pluginName, userName, configName, configValue }) > 0;
+            });
         }
 
         /// <summary>
         /// Create a new configuration entry
         /// </summary>
-        /// <param name="configurationName">Configuration name</param>
+        /// <param name="configName">Configuration name</param>
         /// <param name="pluginName">Plugin name</param>
         /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
         /// <param name="editable">Determines whether the configuration is editable</param>
-        /// <param name="configurationValue">Configuration value</param>
-        public void Create(string configurationName, string pluginName, int type, bool editable, string configurationValue)
+        /// <param name="configValue">Configuration value</param>
+        public void Create(string configName, string pluginName, int type, bool editable, string configValue)
         {
             sqlService.OpenConnection((connection) =>
             {
-                var sql = $"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue, IsEditable, ContentType) " +
-                    $" values(:pluginName, '', :configurationName, :configurationValue, :isEditable, :contentType)";
-
-                connection.Execute(sql, new
-                {
-                    pluginName,
-                    configurationName,
-                    configurationValue,
-                    isEditable = editable,
-                    contentType = type
-                });
+                connection.Execute($"INSERT INTO {TableName} (PlugInName, UserName, ConfigName, ConfigValue, IsEditable, ContentType) " +
+                    $" values(:pluginName, '', :configName, :configValue, :editable, :type)",
+                    new
+                    {
+                        pluginName,
+                        configName,
+                        configValue,
+                        editable,
+                        type
+                    });
             });
         }
 
@@ -124,35 +105,35 @@ namespace Simplic.Configuration.Data
         /// Gets a list configuration values
         /// </summary>
         /// <typeparam name="T">Expected type</typeparam>
-        /// <param name="plugInName">Plugin name</param>
+        /// <param name="pluginName">Plugin name</param>
         /// <param name="userName">User name</param>
         /// <returns>A list configuration values</returns>
-        public IEnumerable<ConfigurationValue> GetValues(string plugInName, string userName)
+        public IEnumerable<ConfigurationValue> GetValues(string pluginName, string userName)
         {
             var rawValues = sqlService.OpenConnection((connection) =>
             {
                 return connection.Query($"SELECT ConfigValue, ConfigName FROM {TableName} " +
-                     $" WHERE PlugInName = :plugInName AND UserName = :userName", new { plugInName, userName });
+                     $" WHERE PlugInName = :pluginName AND UserName = :userName", new { pluginName, userName });
             });
 
             foreach (var rawValue in rawValues)
             {
-                yield return new ConfigurationValue(rawValue.ConfigName, plugInName, userName, rawValue.ConfigValue);
+                yield return new ConfigurationValue(rawValue.ConfigName, pluginName, userName, rawValue.ConfigValue);
             }
         }
 
         /// <summary>
         /// Checks whether a configuration exists
         /// </summary>
-        /// <param name="configurationName">Configuration name</param>
+        /// <param name="configName">Configuration name</param>
         /// <param name="pluginName">Plugin name</param>
-        public bool Exists(string configurationName, string pluginName)
+        public bool Exists(string configName, string pluginName)
         {
-            var sql = $"SELECT COUNT(*) FROM {TableName} WHERE PlugInName LIKE :pluginName AND ConfigName LIKE :configurationName ";
-
             return sqlService.OpenConnection((connection) =>
             {
-                return connection.Query<int>(sql, new { pluginName, configurationName }).FirstOrDefault() > 0;
+                return connection.Query<int>($"SELECT COUNT(*) FROM {TableName}" +
+                    $"WHERE PlugInName LIKE :pluginName AND ConfigName LIKE :configName ",
+                    new { pluginName, configName }).FirstOrDefault() > 0;
             });
         }
     }

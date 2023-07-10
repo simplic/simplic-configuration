@@ -7,8 +7,8 @@ namespace Simplic.Configuration
     /// </summary>
     public class ConfigurationValue : ICacheObject
     {
-        private string configurationName;
-        private string plugInName;
+        private string configName;
+        private string pluginName;
         private string userName;
         private object value;
 
@@ -16,13 +16,13 @@ namespace Simplic.Configuration
         /// Constructor to create a new configuration value
         /// </summary>
         /// <param name="configName">Configuration name</param>
-        /// <param name="plugInName">Plugin name</param>
+        /// <param name="pluginName">Plugin name</param>
         /// <param name="userName">User name</param>
         /// <param name="value">Configuration value</param>
-        public ConfigurationValue(string configName, string plugInName, string userName, object value)
+        public ConfigurationValue(string configName, string pluginName, string userName, object value)
         {
-            this.configurationName = configName;
-            this.plugInName = plugInName;
+            this.configName = configName;
+            this.pluginName = pluginName;
             this.userName = userName;
             this.value = value;
         }
@@ -30,7 +30,7 @@ namespace Simplic.Configuration
 
         public object Value
         {
-            get { return this.value; }
+            get { return value; }
             set { this.value = value; }
         }
 
@@ -42,13 +42,13 @@ namespace Simplic.Configuration
         {
             get
             {
-                return configurationName;
+                return configName;
             }
         }
 
         public string CacheKey
         {
-            get { return GetKeyName(configurationName, plugInName, userName).ToLower().Trim(); }
+            get { return GetKeyName(configName, pluginName, userName).ToLower().Trim(); }
         }
 
 
