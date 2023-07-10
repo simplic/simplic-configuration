@@ -11,4 +11,7 @@
   <ChangeSet guid="8fd7ae74-5a0d-43f9-8a50-253ceeae41f5">
     <Change type="bug">Fixes conversion errors when editing a boolean value.</Change>
   </ChangeSet>
+  <ChangeSet>
+    <Change type="bug">Fixes a conversion error when the value was cached</Change>
+  </ChangeSet>
 </ReleaseNotes>
