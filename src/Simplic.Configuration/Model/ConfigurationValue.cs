@@ -34,19 +34,12 @@ namespace Simplic.Configuration
         /// <summary>
         /// Gets the configuration name
         /// </summary>
-        public string ConfigName
-        {
-            get
-            {
-                return configName;
-            }
-        }
+        public string ConfigName => configName;
 
-        public string CacheKey
-        {
-            get { return GetKeyName(configName, pluginName, userName).ToLower().Trim(); }
-        }
-
+        /// <summary>
+        /// Gets the key used as a unique identifier in the cache
+        /// </summary>
+        public string CacheKey => GetKeyName(configName, pluginName, userName).ToLower().Trim();
 
         /// <summary>
         /// Generiert den eindeutigen Key eines ConvifurationValue - ICacheable
