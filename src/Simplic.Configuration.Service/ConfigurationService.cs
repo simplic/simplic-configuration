@@ -84,16 +84,14 @@ namespace Simplic.Configuration.Service
         /// <inheritdoc/>
         public void SetValue<T>(string configurationName, string pluginName, string userName, T value)
         {
-            string str = null;
+            object raw = value;
 
-            if (value is bool)
+            if (raw is bool || (raw is bool? && raw != null))
             {
-                str = Convert.ToInt32(value).ToString();
+                raw = Convert.ToInt32(raw);
             }
-            else if (value is bool? && value != null)
-            {
-                str = Convert.ToInt32(value).ToString();
-            }
+
+            string str = raw?.ToString() ?? "";
 
             configurationRepository.SetValue(pluginName, userName, configurationName, str);
 
