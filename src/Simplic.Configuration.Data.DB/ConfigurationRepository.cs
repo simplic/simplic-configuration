@@ -16,13 +16,7 @@ namespace Simplic.Configuration.Data
             this.sqlService = sqlService;
         }
 
-        /// <summary>
-        /// Gets a configuration value
-        /// </summary>
-        /// <param name="plugInName">Plugin name</param>
-        /// <param name="userName">User name</param>
-        /// <param name="configurationName">Configuration name</param>
-        /// <returns>Configuration value</returns>
+        /// <inheritdoc/>
         public string GetValue(string pluginName, string userName, string configurationName)
         {
             var sql = $"SELECT ConfigValue FROM {TableName} WHERE " +
@@ -35,18 +29,12 @@ namespace Simplic.Configuration.Data
             });
         }
 
-        /// <summary>
-        /// Sets a configuration value (saves in the db)
-        /// </summary>
-        /// <param name="pluginName">Plugin name</param>
-        /// <param name="userName">User name</param>
-        /// <param name="configName">Configuration name</param>
-        /// <param name="configValue">Configuration value</param>
+        /// <inheritdoc/>
         public void SetValue(string pluginName, string userName, string configName, string configValue)
         {
             string sql;
 
-            // Wenn es eine Benutzerabhängige Konfiguration ist und noch kein Wert existiert, dann versuchen wir den datensatz zu kopieren.
+            // If the setting is user-dependent and not set, try to copy the value from the user-independent setting.
             if (!string.IsNullOrWhiteSpace(userName) && GetValue(pluginName, userName, configName) == null)
             {
 
@@ -76,14 +64,7 @@ namespace Simplic.Configuration.Data
             });
         }
 
-        /// <summary>
-        /// Create a new configuration entry
-        /// </summary>
-        /// <param name="configName">Configuration name</param>
-        /// <param name="pluginName">Plugin name</param>
-        /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
-        /// <param name="editable">Determines whether the configuration is editable</param>
-        /// <param name="configValue">Configuration value</param>
+        /// <inheritdoc/>
         public void Create(string configName, string pluginName, int type, bool editable, string configValue)
         {
             sqlService.OpenConnection((connection) =>
@@ -101,13 +82,7 @@ namespace Simplic.Configuration.Data
             });
         }
 
-        /// <summary>
-        /// Gets a list configuration values
-        /// </summary>
-        /// <typeparam name="T">Expected type</typeparam>
-        /// <param name="pluginName">Plugin name</param>
-        /// <param name="userName">User name</param>
-        /// <returns>A list configuration values</returns>
+        /// <inheritdoc/>
         public IEnumerable<ConfigurationValue> GetValues(string pluginName, string userName)
         {
             var rawValues = sqlService.OpenConnection((connection) =>
@@ -122,11 +97,7 @@ namespace Simplic.Configuration.Data
             }
         }
 
-        /// <summary>
-        /// Checks whether a configuration exists
-        /// </summary>
-        /// <param name="configName">Configuration name</param>
-        /// <param name="pluginName">Plugin name</param>
+        /// <inheritdoc/>
         public bool Exists(string configName, string pluginName)
         {
             return sqlService.OpenConnection((connection) =>

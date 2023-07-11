@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Simplic.Configuration.Service
 {
+    /// <inheritdoc/>
     public class ConfigurationService : IConfigurationService
     {
         #region Private Members
@@ -20,12 +21,7 @@ namespace Simplic.Configuration.Service
         #region Private Methods
 
         #region [CastConfigurationValue]
-        /// <summary>
-        /// Casts a configuration value to a specific type
-        /// </summary>
-        /// <typeparam name="T">Target type</typeparam>
-        /// <param name="value">Value to cast</param>
-        /// <returns>Casted value</returns>
+        /// <inheritdoc/>
         private T CastConfigurationValue<T>(object value)
         {
             if (value is T t)
@@ -49,14 +45,7 @@ namespace Simplic.Configuration.Service
 
         #endregion
 
-        /// <summary>
-        /// Gibt einen Konfigurationswert zurück
-        /// </summary>
-        /// <param name="configurationName">Konfigurationswert</param>
-        /// <param name="pluginName">PlugInName</param>
-        /// <param name="userName">Benutzername</param>
-        /// <param name="noCaching">Wenn true, wird kein Cache verwendet</param>
-        /// <returns>Wert</returns>
+        /// <inheritdoc/>
         public T GetValue<T>(string configurationName, string pluginName, string userName, bool noCaching = false)
         {
             if (!noCaching)
@@ -82,29 +71,17 @@ namespace Simplic.Configuration.Service
             return CastConfigurationValue<T>(value);
         }
 
-        /// <summary>
-        /// Get an enumerable of configuration values by its plugin name
-        /// </summary>
-        /// <typeparam name="T">Expected type</typeparam>
-        /// <param name="plugInName">PlugIn-Name</param>
-        /// <param name="userName">Current username, should be empty for ignoring</param>
-        /// <returns>Enumerable of values</returns>
+        /// <inheritdoc/>
         public IEnumerable<ConfigurationValue> GetValues<T>(string pluginName, string userName)
         {
-            foreach(var config in configurationRepository.GetValues(pluginName, userName))
+            foreach (var config in configurationRepository.GetValues(pluginName, userName))
             {
                 config.Value = CastConfigurationValue<T>(config.Value);
                 yield return config;
             }
         }
 
-        /// <summary>
-        /// Setzt einen Konfigurationswert
-        /// </summary>
-        /// <param name="configurationName">Name der Konfiguration</param>
-        /// <param name="pluginName">PlugIn-Name</param>
-        /// <param name="userName">Benutzername</param>
-        /// <param name="value">Wert</param>
+        /// <inheritdoc/>
         public void SetValue<T>(string configurationName, string pluginName, string userName, T value)
         {
             string str = null;
@@ -129,25 +106,14 @@ namespace Simplic.Configuration.Service
                 cacheService.Set(new ConfigurationValue(configurationName, pluginName, userName, str));
         }
 
-        /// <summary>
-        /// Create a new configuration entry
-        /// </summary>
-        /// <param name="configurationName">Configuration name</param>
-        /// <param name="pluginName">Plugin name</param>
-        /// <param name="type">Type (0 = string, 1 = int, 5 = bool)</param>
-        /// <param name="editable">Determines whether the configuration is editable</param>
-        /// <param name="configurationValue">Configuration value</param>
+        /// <inheritdoc/>
         public void Create<T>(string configurationName, string pluginName, int type, bool editable, T configurationValue)
         {
             configurationRepository.Create(configurationName, pluginName, type, editable, "");
             SetValue<T>(configurationName, pluginName, "", configurationValue);
         }
 
-        /// <summary>
-        /// Checks whether a configuration exists
-        /// </summary>
-        /// <param name="configurationName">Configuration name</param>
-        /// <param name="pluginName">Plugin name</param>
+        /// <inheritdoc/>
         public bool Exists(string configurationName, string pluginName) => configurationRepository.Exists(configurationName, pluginName);
     }
 }

@@ -3,7 +3,7 @@
 namespace Simplic.Configuration
 {
     /// <summary>
-    /// Stellt Methoden bereit, um Konfigurationen zu verwalten
+    /// Gets and sets configuration values
     /// </summary>
     public interface IConfigurationService
     {
@@ -11,28 +11,30 @@ namespace Simplic.Configuration
         /// Get an enumerable of configuration values by its plugin name
         /// </summary>
         /// <typeparam name="T">Expected type</typeparam>
-        /// <param name="plugInName">PlugIn-Name</param>
-        /// <param name="userName">Current username, should be empty for ignoring</param>
-        /// <returns>Enumerable of values</returns>
+        /// <param name="pluginName">Name of the plugin</param>
+        /// <param name="userName">Name of the user. Uses user-independent setting if empty</param>
+        /// <returns>Enumerable of values casted to <typeparamref name="T"/></returns>
         IEnumerable<ConfigurationValue> GetValues<T>(string pluginName, string userName);
 
         /// <summary>
-        /// Gibt einen Konfigurationswert zurück
+        /// Gets a configuration value
         /// </summary>
-        /// <param name="ConfigurationName">Konfigurationswert</param>
-        /// <param name="PlugInName">PlugInName</param>
-        /// <param name="UserName">Benutzername</param>
-        /// <param name="NoCaching">Wenn true, wird kein Cache verwendet</param>
-        /// <returns>Wert</returns>
+        /// <typeparam name="T">Target type</typeparam>
+        /// <param name="configurationName">Name of the setting</param>
+        /// <param name="pluginName">Name of the plugin</param>
+        /// <param name="userName">Name of the user. Uses user-independent setting if empty</param>
+        /// <param name="noCaching">If true, the value will not be loaded from the cache nor stored.</param>
+        /// <returns>Configuration value casted to <typeparamref name="T"/></returns>
         T GetValue<T>(string configurationName, string pluginName, string userName, bool noCaching = false);
-        
+
         /// <summary>
-        /// Setzt einen Konfigurationswert
+        /// Sets a configuration
         /// </summary>
-        /// <param name="ConfigurationName">Name der Konfiguration</param>
-        /// <param name="PlugInName">PlugIn-Name</param>
-        /// <param name="UserName">Benutzername</param>
-        /// <param name="Value">Wert</param>
+        /// <typeparam name="T">Input type</typeparam>
+        /// <param name="configurationName">Name of the configuration</param>
+        /// <param name="pluginName">Name of the plugin</param>
+        /// <param name="userName">Name of the user. Uses user-independent setting if empty</param>
+        /// <param name="value">Configuration value</param>
         void SetValue<T>(string configurationName, string pluginName, string userName, T value);
 
         /// <summary>
