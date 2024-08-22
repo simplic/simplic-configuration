@@ -14,7 +14,7 @@
   <ChangeSet guid="1b955e52-7d3b-4caa-9490-70e3bb0069af">
     <Change type="bug">Fixes a conversion error when the value was cached</Change>
   </ChangeSet>
-  <ChangeSet>
+  <ChangeSet guid="b1fea10c-852d-471e-9ba2-707a65f97166">
     <Change type="bug">Fixes a sql query that was causing an error in the configuration service.</Change>
   </ChangeSet>
 </ReleaseNotes>
