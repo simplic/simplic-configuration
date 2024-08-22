@@ -102,7 +102,7 @@ namespace Simplic.Configuration.Data
         {
             return sqlService.OpenConnection((connection) =>
             {
-                return connection.Query<int>($"SELECT COUNT(*) FROM {TableName}" +
+                return connection.Query<int>($"SELECT COUNT(*) FROM {TableName} " +
                     $"WHERE PlugInName LIKE :pluginName AND ConfigName LIKE :configName ",
                     new { pluginName, configName }).FirstOrDefault() > 0;
             });
